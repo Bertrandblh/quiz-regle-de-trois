@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz : Règle de trois</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      background-color: #f7f9fb;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .question {
+      background-color: #ffffff;
+      border: 1px solid #ccddee;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      margin-top: 10px;
+      margin-right: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .result {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #dff0d8;
+      border-left: 6px solid #3c763d;
+    }
+
+    .good { color: green; }
+    .bad { color: crimson; }
+    .correction { font-style: italic; font-size: 90%; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Quiz : La règle de trois</h1>
+  <div id="quiz"></div>
+  <button id="submit">Valider mes réponses</button>
+  <button id="reset" style="display: none;">Recommencer le quiz</button>
+  <div id="score" class="result"></div>
+
+  <script>
+    const questions = [
+      {q: "1. Si 2 stylos coûtent 4 €, combien coûtent 5 stylos ?", choices: ["8 €", "10 €", "12 €"], answer: 1},
+      {q: "2. Pour faire 12 crêpes, il faut 300 ml de lait. Combien pour 4 crêpes ?", choices: ["100 ml", "150 ml", "75 ml"], answer: 0},
+      {q: "3. Si tu parcours 60 km en 1 heure, combien en 2h30 ?", choices: ["120 km", "130 km", "150 km"], answer: 2},
+      {q: "4. Une machine fabrique 30 pièces en 10 minutes. Combien en 25 minutes ?", choices: ["65 pièces", "75 pièces", "90 pièces"], answer: 1},
+      {q: "5. 8 pommes pèsent 1,6 kg. Quel est le poids de 5 pommes ?", choices: ["0,8 kg", "0,9 kg", "1 kg"], answer: 2},
+      {q: "6. Si tu gagnes 36 € pour 3 heures de baby-sitting, combien pour 5 heures ?", choices: ["45 €", "60 €", "75 €"], answer: 1},
+      {q: "7. Une voiture consomme 5 litres pour 100 km. Combien pour 300 km ?", choices: ["10 L", "12 L", "15 L"], answer: 2},
+      {q: "8. 4 sachets de bonbons pèsent 600 g. Combien pour 10 sachets ?", choices: ["1500 g", "1200 g", "2000 g"], answer: 0},
+      {q: "9. Il faut 12 minutes pour remplir un seau. Combien pour en remplir 4 ?", choices: ["24 min", "36 min", "48 min"], answer: 2},
+      {q: "10. Une affiche de 80 cm coûte 10 €. Combien pour une affiche de 160 cm ?", choices: ["20 €", "16 €", "80 €"], answer: 0}
+    ];
+
+    const quizDiv = document.getElementById('quiz');
+    const scoreDiv = document.getElementById('score');
+    const submitBtn = document.getElementById('submit');
+    const resetBtn = document.getElementById('reset');
+
+    function displayQuiz() {
+      quizDiv.innerHTML = "";
+      scoreDiv.innerHTML = "";
+      questions.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'question';
+        div.innerHTML = `<p><strong>${item.q}</strong></p>`;
+        item.choices.forEach((c, j) => {
+          const id = `q${i}_c${j}`;
+          div.innerHTML += `
+            <div>
+              <input type="radio" name="q${i}" id="${id}" value="${j}">
+              <label for="${id}">${c}</label>
+            </div>`;
+        });
+        quizDiv.appendChild(div);
+      });
+      submitBtn.style.display = 'inline-block';
+      resetBtn.style.display = 'none';
+    }
+
+    submitBtn.onclick = () => {
+      let score = 0;
+      questions.forEach((item, i) => {
+        const select = document.querySelector(`input[name="q${i}"]:checked`);
+        const chosen = select ? parseInt(select.value) : -1;
+        const questionDiv = quizDiv.children[i];
+        if (chosen === item.answer) {
+          score++;
+          questionDiv.classList.add("good");
+        } else {
+          questionDiv.classList.add("bad");
+          const correctText = item.choices[item.answer];
+          questionDiv.innerHTML += `<div class="correction">→ Bonne réponse : <strong>${correctText}</strong></div>`;
+        }
+      });
+      scoreDiv.textContent = `Ton score : ${score} / ${questions.length}`;
+      submitBtn.style.display = 'none';
+      resetBtn.style.display = 'inline-block';
+    };
+
+    resetBtn.onclick = () => displayQuiz();
+
+    displayQuiz();
+  </script>
+</body>
+</html>
